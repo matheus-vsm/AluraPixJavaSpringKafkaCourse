@@ -17,7 +17,6 @@ import java.util.Map;
 @Configuration
 public class ProducerKafkaConfig {
 
-
     @Value(value = "${spring.kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapAddress;
 

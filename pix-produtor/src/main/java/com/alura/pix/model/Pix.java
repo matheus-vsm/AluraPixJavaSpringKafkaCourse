@@ -1,12 +1,10 @@
 package com.alura.pix.model;
 
+import com.alura.pix.dto.PixDTO;
 import com.alura.pix.dto.PixStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import  com.alura.pix.dto.PixDTO;
-
 
 import java.time.LocalDateTime;
 
@@ -36,4 +34,5 @@ public class Pix {
         pix.setChaveOrigem(pixDTO.getChaveOrigem());
         return pix;
     }
+
 }
