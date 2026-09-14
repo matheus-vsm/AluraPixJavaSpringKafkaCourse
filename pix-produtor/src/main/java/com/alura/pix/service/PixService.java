@@ -16,7 +16,7 @@ public class PixService {
     private final PixRepository pixRepository;
 
     @Autowired
-    private final KafkaTemplate<String, PixDTO>  kafkaTemplate;
+    private final KafkaTemplate<String, PixDTO> kafkaTemplate;
 
     public PixDTO salvarPix(PixDTO pixDTO) {
         pixRepository.save(Pix.toEntity(pixDTO));
