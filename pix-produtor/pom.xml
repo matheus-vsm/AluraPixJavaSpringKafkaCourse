@@ -11,7 +11,7 @@
     <groupId>com.alura</groupId>
     <artifactId>pix</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>pix</name>
+    <name>pixprodutor</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>17</java.version>
