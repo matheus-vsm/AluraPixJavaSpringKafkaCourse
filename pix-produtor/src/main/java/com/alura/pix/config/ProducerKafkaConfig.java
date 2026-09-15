@@ -1,6 +1,7 @@
 package com.alura.pix.config;
 
-import com.alura.pix.dto.PixDTO;
+import com.alura.pix.avro.PixRecord;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,7 @@ public class ProducerKafkaConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, PixDTO> producerFactory() {
+    public ProducerFactory<String, PixRecord> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -30,13 +31,16 @@ public class ProducerKafkaConfig {
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
         configProps.put(
+                "schema.registry.url",
+                "http://localhost:8081"); // caminho do consumer
+        configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class);
+                KafkaAvroSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, PixDTO> kafkaTemplate() {
+    public KafkaTemplate<String, PixRecord> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
