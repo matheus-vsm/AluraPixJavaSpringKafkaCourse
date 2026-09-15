@@ -73,7 +73,16 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8081/subjects"]
+      # HTTP via Bash: a imagem minimalista nao inclui curl.
+      test:
+        - CMD
+        - bash
+        - -ec
+        - |
+          exec 3<>/dev/tcp/127.0.0.1/8081
+          printf 'GET /subjects HTTP/1.0\r\nHost: localhost\r\n\r\n' >&3
+          IFS= read -r -t 3 status <&3
+          [[ "$$status" == HTTP/*" 200 "* ]]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -107,7 +116,16 @@ services:
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8083/connectors"]
+      # Confirma HTTP 200 da API, sem depender de curl.
+      test:
+        - CMD
+        - bash
+        - -ec
+        - |
+          exec 3<>/dev/tcp/127.0.0.1/8083
+          printf 'GET /connectors HTTP/1.0\r\nHost: localhost\r\n\r\n' >&3
+          IFS= read -r -t 3 status <&3
+          [[ "$$status" == HTTP/*" 200 "* ]]
       interval: 10s
       timeout: 5s
       retries: 12
