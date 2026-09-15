@@ -35,4 +35,10 @@ public class PixService {
         return pixDTO;
     }
 
+// KAFKA CONNECT
+//    public PixDTO salvarPix(PixDTO pixDTO) {
+//        pixRepository.save(Pix.toEntity(pixDTO));
+//        return pixDTO;
+//    }
+
 }
