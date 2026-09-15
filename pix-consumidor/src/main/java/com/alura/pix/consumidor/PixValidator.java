@@ -1,6 +1,6 @@
 package com.alura.pix.consumidor;
 
-import com.alura.pix.dto.PixDTO;
+import com.alura.pix.avro.PixRecord;
 import com.alura.pix.dto.PixStatus;
 import com.alura.pix.exception.KeyNotFoundException;
 import com.alura.pix.model.Key;
@@ -25,20 +25,20 @@ public class PixValidator {
 
     @KafkaListener(topics = "pix-topic", groupId = "grupo")
     @RetryableTopic(backoff = @Backoff(value = 3000L), attempts = "5", autoCreateTopics = "true", include = KeyNotFoundException.class)
-    public void processaPix(PixDTO pixDTO, Acknowledgment acknowledgment) {
-        System.out.println("Pix recebido: " + pixDTO.getIdentifier());
+    public void processaPix(PixRecord pixRecord, Acknowledgment acknowledgment) {
+        System.out.println("Pix recebido: " + pixRecord.getIdentificador());
 
-        Pix pix = pixRepository.findByIdentifier(pixDTO.getIdentifier());
+        Pix pix = pixRepository.findByIdentifier(pixRecord.getIdentificador().toString());
 
-        Key origem = keyRepository.findByChave(pixDTO.getChaveOrigem());
-        Key destino = keyRepository.findByChave(pixDTO.getChaveDestino());
+        Key origem = keyRepository.findByChave(pixRecord.getChaveOrigem().toString());
+        Key destino = keyRepository.findByChave(pixRecord.getChaveDestino().toString());
 
         if (origem == null || destino == null) {
             pix.setStatus(PixStatus.ERRO);
             throw new KeyNotFoundException();
         } else {
             pix.setStatus(PixStatus.PROCESSADO);
-            System.out.println("Pix processado: " + pixDTO.getIdentifier());
+            System.out.println("Pix processado: " + pixRecord.getIdentificador());
         }
         pixRepository.save(pix);
         acknowledgment.acknowledge();
