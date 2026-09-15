@@ -1,12 +1,16 @@
 package com.alura.pix.consumidor;
 
 import com.alura.pix.avro.PixRecord;
+import com.alura.pix.dto.PixDTO;
 import com.alura.pix.dto.PixStatus;
 import com.alura.pix.exception.KeyNotFoundException;
 import com.alura.pix.model.Key;
 import com.alura.pix.model.Pix;
 import com.alura.pix.repository.KeyRepository;
 import com.alura.pix.repository.PixRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.avro.generic.GenericData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -43,5 +47,29 @@ public class PixValidator {
         pixRepository.save(pix);
         acknowledgment.acknowledge();
     }
+
+//KAFKA CONNECT
+//    @KafkaListener(topics = "pix-service.public.pix", groupId = "grupo")
+//    public void processaPix(GenericData.Record data) throws JsonProcessingException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.findAndRegisterModules();
+//
+//        PixDTO pixDTO = mapper.readValue(data.get("after").toString(), PixDTO.class);
+//        System.out.println("Pix processado: " + pixDTO.getIdentifier());
+//
+//        if (pixDTO.getStatus().equals(PixStatus.EM_PROCESSAMENTO)) {
+//            Pix pix = pixRepository.findByIdentifier(pixDTO.getIdentifier());
+//
+//            Key origem = keyRepository.findByChave(pixDTO.getChaveOrigem());
+//            Key destino = keyRepository.findByChave(pixDTO.getChaveDestino());
+//
+//            if (origem == null || destino == null) {
+//                pix.setStatus(PixStatus.ERRO);
+//            } else {
+//                pix.setStatus(PixStatus.PROCESSADO);
+//            }
+//            pixRepository.save(pix);
+//        }
+//    }
 
 }
